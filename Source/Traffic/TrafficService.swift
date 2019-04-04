@@ -88,8 +88,10 @@ internal class TrafficService: MQTTSessionDelegate {
 			.map { flight, state in flight }
 			.unwrap()
 			.filter {[unowned self] _ in AirMap.authService.isAuthorized && self.delegate != nil}
-			.flatMap(unowned(self, TrafficService.connectWithFlight))
-			.catchError({ _ in return Observable.just( .disconnected) })
+			.flatMap({ [unowned self] flight -> Observable<ConnectionState> in
+				return self.connectWithFlight(flight)
+					.catchError({ _ in return Observable.just( .disconnected) })
+			})
 			.bind(to: connectionState)
 			.disposed(by: disposeBag)
 
@@ -99,8 +101,10 @@ internal class TrafficService: MQTTSessionDelegate {
 			.filter {[unowned self] _ in AirMap.authService.isAuthorized && self.delegate != nil}
 			.map { flight, state in flight }
 			.unwrap()
-			.flatMap(unowned(self, TrafficService.subscribeToTraffic))
-			.catchError({ [unowned self] _ in self.connectionState.value = .disconnected;  return Observable.empty() })
+			.flatMap({ [unowned self] flight -> Observable<Void> in
+				return self.subscribeToTraffic(flight)
+					.catchError({ [unowned self] _ in self.connectionState.value = .disconnected;  return Observable.empty() })
+			})
 			.subscribe()
 			.disposed(by: disposeBag)
 
@@ -127,9 +131,10 @@ internal class TrafficService: MQTTSessionDelegate {
 			.skipWhile({[unowned self] _ in !AirMap.authService.isAuthorized || self.delegate == nil})
 			.flatMap(AirMap.rx.getCurrentAuthenticatedPilotFlight)
 			.retry(2)
-			.catchErrorJustReturn(nil)
+
 
 		Observable.merge(refreshCurrentFlight, receivedFlight.asObservable())
+			.catchErrorJustReturn(nil)
 			.unwrap()
 			.bind(to: currentFlight)
 			.disposed(by: disposeBag)
