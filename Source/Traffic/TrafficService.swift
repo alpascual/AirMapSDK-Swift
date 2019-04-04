@@ -52,6 +52,7 @@ internal class TrafficService: MQTTSessionDelegate {
 	fileprivate var connectionState = Variable(ConnectionState.disconnected)
 	fileprivate var currentFlight = BehaviorRelay<AirMapFlight?>(value: nil)
 	fileprivate var receivedFlight = BehaviorRelay<AirMapFlight?>(value: nil)
+	fileprivate var isEnabled = false // Do not refresh current flight when disonnected
 
 	fileprivate let disposeBag = DisposeBag()
 
@@ -122,7 +123,7 @@ internal class TrafficService: MQTTSessionDelegate {
 		let refreshCurrentFlightTimer = Observable<Int>.timer(0, period: 15, scheduler: MainScheduler.instance).mapToVoid()
 
 		let refreshCurrentFlight = refreshCurrentFlightTimer
-			.filter {[unowned self] _ in AirMap.authService.isAuthorized && self.delegate != nil}
+			.filter {[unowned self] _ in AirMap.authService.isAuthorized && self.delegate != nil && self.isEnabled}
 			.skipWhile({[unowned self] _ in !AirMap.authService.isAuthorized || self.delegate == nil})
 			.flatMap(AirMap.rx.getCurrentAuthenticatedPilotFlight)
 			.retry(2)
@@ -157,11 +158,13 @@ internal class TrafficService: MQTTSessionDelegate {
 				disconnect()
 			}
 			AirMap.rx.getCurrentAuthenticatedPilotFlight().bind(to: currentFlight).disposed(by: disposeBag)
+			isEnabled = true
 		}
 	}
 
 	func disconnect() {
-		
+		isEnabled = false
+
 		unsubscribeFromAllChannels()
 			.do(onDispose: { [unowned self] in
 				self.client.disconnect()
