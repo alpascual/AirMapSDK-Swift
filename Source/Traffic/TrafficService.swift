@@ -67,7 +67,7 @@ internal class TrafficService: MQTTSessionDelegate {
 	init() {
 		client.delegate = self
 		setupBindings()
-		connect()
+		resumeTraffic()
 	}
 
 	// MARK: - Instance Methods
@@ -79,7 +79,10 @@ internal class TrafficService: MQTTSessionDelegate {
 		let flight = currentFlight.asObservable()
 			.distinctUntilChanged { flight in flight?.id ?? "" }
 
-		let flightState = Observable.combineLatest(flight, state) { ($0, $1) }
+		let flightState = Observable.combineLatest(flight, state, trafficState.asObservable())
+			.map { (flight, state, trafficState) in
+				return (flight, state)
+			}
 
 		let whenConnected = flightState.filter { $1 == .connected }
 		let whenDisconnected = flightState.filter { $1 == .disconnected }
@@ -93,7 +96,7 @@ internal class TrafficService: MQTTSessionDelegate {
 			.throttle(1, scheduler: MainScheduler.instance)
 			.map { flight, state in flight }
 			.unwrap()
-			.filter {[unowned self] _ in AirMap.authService.isAuthorized && self.delegate != nil}
+			.filter {[unowned self] _ in AirMap.authService.isAuthorized && self.delegate != nil && self.trafficState.value == .active}
 			.flatMap({ [unowned self] flight -> Observable<ConnectionState> in
 				return self.connectWithFlight(flight)
 					.catchError({ _ in return Observable.just( .disconnected) })
@@ -164,11 +167,11 @@ internal class TrafficService: MQTTSessionDelegate {
 			.disposed(by: disposeBag)
 	}
 
-	func connect() {
+	func resumeTraffic() {
 
 		if AirMap.authService.isAuthorized && delegate != nil {
 			if connectionState.value != .disconnected {
-				disconnect()
+				suspendTraffic()
 			}
 			AirMap.rx.getCurrentAuthenticatedPilotFlight().bind(to: currentFlight).disposed(by: disposeBag)
 		}
@@ -176,26 +179,30 @@ internal class TrafficService: MQTTSessionDelegate {
 		trafficState.value = .active
 	}
 
-	func suspend() {
+	func suspendTraffic() {
 		trafficState.value = .suspended
 
 		unsubscribeFromAllChannels()
 			.do(onDispose: { [unowned self] in
 				self.client.disconnect()
 				self.connectionState.value = .disconnected
-				self.currentFlight.accept(nil)
 			})
 			.subscribe()
 			.disposed(by: disposeBag)
 	}
 
 	func disconnect() {
-		suspend()
+		suspendTraffic()
 		self.removeAllTraffic()
 	}
 
 	func startObservingTraffic(for flight: AirMapFlight) {
+		trafficState.value = .active
 		receivedFlight.accept(flight)
+	}
+
+	func stopObservingTraffic() {
+		disconnect()
 	}
 
 	// MARK: - Observable Methods

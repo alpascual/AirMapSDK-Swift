@@ -38,13 +38,13 @@ extension AirMap {
 	/// Suspend all active traffic alerts
 	/// Typically called when the app enters the background.
 	public static func suspendTraffic() {
-		trafficService.disconnect()
+		trafficService.suspendTraffic()
 	}
 	
 	/// Resume all active traffic alerts
 	/// Typically called when the app enters the foreground.
 	public static func resumeTraffic() {
-		trafficService.connect()
+		trafficService.resumeTraffic()
 	}
 
 	/// Start observing traffic from a flight immediately
@@ -53,4 +53,9 @@ extension AirMap {
 		trafficService.startObservingTraffic(for: flight)
 	}
 
+	/// Stop observing traffic immediately
+	/// Typically called when a flight ends.
+	public static func stopObservingTraffic() {
+		trafficService.stopObservingTraffic()
+	}
 }
