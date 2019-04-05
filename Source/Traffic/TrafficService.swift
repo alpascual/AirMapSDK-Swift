@@ -27,6 +27,11 @@ import RxCocoa
 
 internal class TrafficService: MQTTSessionDelegate {
 
+	enum TrafficState {
+		case active
+		case suspended
+	}
+
 	enum ConnectionState {
 		case connecting
 		case connected
@@ -49,6 +54,7 @@ internal class TrafficService: MQTTSessionDelegate {
 	fileprivate var activeTraffic = [AirMapTraffic]()
 	fileprivate var expirationInterval = Constants.Traffic.expirationInterval
 	fileprivate var client = TrafficClient()
+	fileprivate var trafficState = Variable(TrafficState.suspended)
 	fileprivate var connectionState = Variable(ConnectionState.disconnected)
 	fileprivate var currentFlight = BehaviorRelay<AirMapFlight?>(value: nil)
 	fileprivate var receivedFlight = BehaviorRelay<AirMapFlight?>(value: nil)
@@ -124,11 +130,13 @@ internal class TrafficService: MQTTSessionDelegate {
 			})
 			.disposed(by: disposeBag)
 
-		let refreshCurrentFlightTimer = Observable<Int>.timer(0, period: 15, scheduler: MainScheduler.instance).mapToVoid()
+		let refreshCurrentFlightTimer = Observable<Int>.timer(0, period: 15, scheduler: MainScheduler.instance)
 
 		let refreshCurrentFlight = refreshCurrentFlightTimer
+			.withLatestFrom(trafficState.asObservable())
+			.filter { $0 == .active }
+			.mapToVoid()
 			.filter {[unowned self] _ in AirMap.authService.isAuthorized && self.delegate != nil && self.isEnabled}
-			.skipWhile({[unowned self] _ in !AirMap.authService.isAuthorized || self.delegate == nil})
 			.flatMap(AirMap.rx.getCurrentAuthenticatedPilotFlight)
 			.retry(2)
 
@@ -163,22 +171,27 @@ internal class TrafficService: MQTTSessionDelegate {
 				disconnect()
 			}
 			AirMap.rx.getCurrentAuthenticatedPilotFlight().bind(to: currentFlight).disposed(by: disposeBag)
-			isEnabled = true
 		}
+
+		trafficState.value = .active
 	}
 
-	func disconnect() {
-		isEnabled = false
+	func suspend() {
+		trafficState.value = .suspended
 
 		unsubscribeFromAllChannels()
 			.do(onDispose: { [unowned self] in
 				self.client.disconnect()
 				self.connectionState.value = .disconnected
 				self.currentFlight.accept(nil)
-				self.removeAllTraffic()
 			})
 			.subscribe()
 			.disposed(by: disposeBag)
+	}
+
+	func disconnect() {
+		suspend()
+		self.removeAllTraffic()
 	}
 
 	func startObservingTraffic(for flight: AirMapFlight) {
@@ -267,6 +280,10 @@ internal class TrafficService: MQTTSessionDelegate {
 	// MARK: - Private Instance Methods
 
 	fileprivate func addTraffic(_ traffic: [AirMapTraffic]) {
+
+		guard trafficState.value == .active else {
+			return
+		}
 
 		guard let currentFlight = currentFlight.value else {
 			disconnect()
