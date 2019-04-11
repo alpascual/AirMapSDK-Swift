@@ -53,7 +53,7 @@ class AuthService: NSObject {
 		switch authState {
 		case .loggedOut:
 			return nil
-		case .anonymous(let token):
+		case .anonymous:
 			return nil
 		case .authenticated(let state):
 			return state.lastTokenResponse?.refreshToken
