@@ -458,7 +458,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-AirMapSDKTests/Pods-AirMapSDKTests-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-AirMapSDKTests/Pods-AirMapSDKTests-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/AirMapSDK/AirMap.framework",
 				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
 				"${BUILT_PRODUCTS_DIR}/AppAuth/AppAuth.framework",
@@ -509,7 +509,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-AirMapSDKTests/Pods-AirMapSDKTests-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-AirMapSDKTests/Pods-AirMapSDKTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		8DD89661225207C6F3F32658 /* [CP] Embed Pods Frameworks */ = {
@@ -518,7 +518,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-AirMapSDK-Example-iOS/Pods-AirMapSDK-Example-iOS-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-AirMapSDK-Example-iOS/Pods-AirMapSDK-Example-iOS-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/AirMapSDK/AirMap.framework",
 				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
 				"${BUILT_PRODUCTS_DIR}/AppAuth/AppAuth.framework",
@@ -563,7 +563,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-AirMapSDK-Example-iOS/Pods-AirMapSDK-Example-iOS-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-AirMapSDK-Example-iOS/Pods-AirMapSDK-Example-iOS-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		A2BDF9270E9FE49300F6CF70 /* [CP] Check Pods Manifest.lock */ = {
