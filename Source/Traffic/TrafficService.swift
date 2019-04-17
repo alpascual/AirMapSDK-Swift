@@ -164,9 +164,9 @@ internal class TrafficService: MQTTSessionDelegate {
 	}
 
 	func connect() {
+		isActive = true
 
 		if AirMap.authService.isAuthorized && delegate != nil {
-			isActive = true
 
 			if connectionState.value != .disconnected {
 				disconnect()
