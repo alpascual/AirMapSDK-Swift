@@ -1,11 +1,12 @@
 PODS:
-  - AirMapSDK (3.0.0.beta.1):
-    - AirMapSDK/Core (= 3.0.0.beta.1)
-    - AirMapSDK/Telemetry (= 3.0.0.beta.1)
-    - AirMapSDK/Traffic (= 3.0.0.beta.1)
-    - AirMapSDK/UI (= 3.0.0.beta.1)
-  - AirMapSDK/Core (3.0.0.beta.1):
+  - AirMapSDK (3.0.0.beta.2):
+    - AirMapSDK/Core (= 3.0.0.beta.2)
+    - AirMapSDK/Telemetry (= 3.0.0.beta.2)
+    - AirMapSDK/Traffic (= 3.0.0.beta.2)
+    - AirMapSDK/UI (= 3.0.0.beta.2)
+  - AirMapSDK/Core (3.0.0.beta.2):
     - Alamofire
+    - AppAuth
     - KeychainAccess
     - Log
     - ObjectMapper
@@ -13,17 +14,16 @@ PODS:
     - RxSwift
     - RxSwiftExt
     - SwiftTurf
-  - AirMapSDK/Telemetry (3.0.0.beta.1):
+  - AirMapSDK/Telemetry (3.0.0.beta.2):
     - AirMapSDK/Core
     - CocoaAsyncSocket
     - CryptoSwift (~> 0.10.0)
     - ProtocolBuffers-Swift (~> 4.0.6)
-  - AirMapSDK/Traffic (3.0.0.beta.1):
+  - AirMapSDK/Traffic (3.0.0.beta.2):
     - AirMapSDK/Core
-    - SwiftMQTT (~> 3.0)
-  - AirMapSDK/UI (3.0.0.beta.1):
+    - SwiftMQTT (> 3.0.0, ~> 3.0)
+  - AirMapSDK/UI (3.0.0.beta.2):
     - AirMapSDK/Core
-    - AppAuth
     - Mapbox-iOS-SDK (< 4.0)
     - PhoneNumberKit
     - RxDataSources
@@ -32,7 +32,7 @@ PODS:
   - CocoaAsyncSocket (7.6.3)
   - CryptoSwift (0.10.0)
   - Differentiator (3.1.0)
-  - KeychainAccess (3.1.1)
+  - KeychainAccess (3.1.2)
   - Log (1.0)
   - Mapbox-iOS-SDK (3.7.8)
   - Nimble (7.3.1)
@@ -71,7 +71,7 @@ PODS:
     - RxSwiftExt/Core (= 3.3.0)
   - RxSwiftExt/Core (3.3.0):
     - RxSwift (~> 4.0)
-  - SwiftMQTT (3.0.0)
+  - SwiftMQTT (3.0.1)
   - SwiftTurf (0.3.2)
 
 DEPENDENCIES:
@@ -109,13 +109,13 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  AirMapSDK: 5887c9c3e808e901c34bc4b460f90c168eb666d5
+  AirMapSDK: c5d3bffc553de7e37eb5a8632d4498537e844628
   Alamofire: c7287b6e5d7da964a70935e5db17046b7fde6568
   AppAuth: 137f6bb6fc9dfbaf2cf9f6fcff1d336ff0163bc6
   CocoaAsyncSocket: eafaa68a7e0ec99ead0a7b35015e0bf25d2c8987
   CryptoSwift: 6c778d69282bed3b4e975ff97a79d074f20bb011
   Differentiator: be49ca3408f0ecfc761e4c7763d20c62be01b9ad
-  KeychainAccess: 7bd430028059754a3debab3cfc0bd1fc7fb85df3
+  KeychainAccess: b3816fddcf28aa29d94b10ec305cd52be14c472b
   Log: 5e368c9528db07517d18d2d04ff5fe2b6f5a1e21
   Mapbox-iOS-SDK: a8b55533ef5c5e91b5a26533bd4fb0ec88a3b994
   Nimble: 04f732da099ea4d153122aec8c2a88fd0c7219ae
@@ -128,7 +128,7 @@ SPEC CHECKSUMS:
   RxDataSources: a843bad90c29817f5923ec8163f4af2de084ceb3
   RxSwift: fe0fd770a43acdb7d0a53da411c9b892e69bb6e4
   RxSwiftExt: 81afb48ab0602f503147417baeb3989d64c7687d
-  SwiftMQTT: acd344613d39c0371de62f9f494e129ca14da9d1
+  SwiftMQTT: 983eeb29e8c8173ed953e0238d2f99b79ff3ccd2
   SwiftTurf: 6ec29121fdb688a223aefca350843a9880e1489f
 
 PODFILE CHECKSUM: 49598a7476ee36a4c507bb3b31b4ae89b2632a65
